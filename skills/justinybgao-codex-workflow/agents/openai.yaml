@@ -1,0 +1,6 @@
+interface:
+  display_name: "Justinybgao Codex Workflow"
+  short_description: "Architecture-led coding with isolated Luna agents"
+  default_prompt: "Use $justinybgao-codex-workflow to clarify, implement, review, and safely prepare this coding task."
+policy:
+  allow_implicit_invocation: false

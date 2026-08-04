@@ -1,6 +1,6 @@
 # Justinybgao Codex Workflow
 
-An opt-in Codex workflow for architecture-led coding. The primary agent stays focused on reasoning and user decisions, while isolated Luna agents handle business-analysis preparation, web research, implementation, and review.
+A Codex workflow for architecture-led coding. New coding tasks are eligible for implicit invocation, while the explicit starter prompt remains the reliable way to request it. The primary agent stays focused on reasoning and user decisions, while isolated Luna agents handle business-analysis preparation, web research, implementation, and review.
 
 The workflow is designed around one hard rule:
 
@@ -48,6 +48,20 @@ The primary model is selected in the desktop composer before the task starts. Fo
 
 `luna_worker` and `luna_reviewer` are intentionally fixed at Luna max. Do not downgrade them for ordinary tasks.
 
+## Activation and visibility
+
+The skill metadata allows Codex to consider this workflow for a new coding task. That is eligibility, not proof that the skill was loaded. When it is actually active, the first assistant message must begin with:
+
+```text
+[Justinybgao Workflow · ACTIVE]
+Skill: justinybgao-codex-workflow
+Primary model: desktop-selected / not exposed
+Coding/review route: luna_worker + luna_reviewer — gpt-5.6-luna / max
+Phase: inspection
+```
+
+The workflow uses concise phase markers for meaningful transitions and ends with `COMPLETE` or `BLOCKED`. If the banner is missing, do not assume this workflow is active; start the task with `$justinybgao-codex-workflow`.
+
 ## Prerequisites
 
 You need:
@@ -57,7 +71,7 @@ You need:
 - Python 3 for repository checks;
 - PyYAML 6.0.3 for the official skill validator.
 
-The workflow is opt-in. It is not a global default and does not edit your global Codex configuration or `AGENTS.md`.
+The workflow does not edit your global Codex configuration or `AGENTS.md`. Implicit invocation is enabled in the skill metadata, but a blank conversation with no coding task cannot be forced to load a task-specific skill by the skill file alone.
 
 ## Installation
 
@@ -89,11 +103,13 @@ The installer is conflict-safe: an existing different file, directory, or symbol
 
 ## How to use it
 
-Invoke the skill explicitly in a new task:
+For a guaranteed activation, invoke the skill explicitly in the first message of a new task:
 
 ```text
 $justinybgao-codex-workflow implement this feature
 ```
+
+If the first response does not show `[Justinybgao Workflow · ACTIVE]`, the skill was not loaded and the agent must not claim that it was used.
 
 You can also be specific about the goal:
 

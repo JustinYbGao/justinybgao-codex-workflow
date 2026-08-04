@@ -72,6 +72,17 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("does not override or switch", normalized)
         self.assertIn("explicit custom-agent spawn is authoritative", normalized)
 
+    def test_skill_requires_visible_activation_handshake(self) -> None:
+        text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
+        normalized = text.lower()
+        self.assertIn("activation handshake", normalized)
+        self.assertIn("[justinybgao workflow · active]", normalized)
+        self.assertIn("first assistant message", normalized)
+        self.assertIn("only print `active` after this skill has actually been loaded", normalized)
+        self.assertIn("do not claim", normalized)
+        self.assertIn("primary model", normalized)
+        self.assertIn("phase:", normalized)
+
     def test_skill_requires_independent_review_and_release_authorization(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
         self.assertIn("final implementation result exists", text)
@@ -79,6 +90,16 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("explicit release authorization", text)
         for action in ("push", "merge", "deploy", "publish", "tag", "release"):
             self.assertIn(action, text)
+
+    def test_activation_handshake_is_complete_and_honest(self) -> None:
+        text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
+        self.assertIn("[Justinybgao Workflow · ACTIVE]", text)
+        self.assertIn("[Justinybgao Workflow · NOT ACTIVE]", text)
+        self.assertIn("[Justinybgao Workflow · COMPLETE]", text)
+        self.assertIn("[Justinybgao Workflow · BLOCKED]", text)
+        self.assertIn("Only print `ACTIVE` after this skill has actually been loaded", text)
+        self.assertIn("do not claim activation", text.lower())
+        self.assertIn("first assistant message", text)
 
     def test_worker_binding(self) -> None:
         agent = self.load_toml("codex/agents/luna_worker.toml")
@@ -124,11 +145,12 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("checkpoint, not a total cap", text)
         self.assertIn("Do not begin implementation", text)
 
-    def test_ui_metadata_uses_explicit_invocation(self) -> None:
+    def test_ui_metadata_supports_implicit_and_explicit_invocation(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/agents/openai.yaml")
         self.assertIn('display_name: "Justinybgao Codex Workflow"', text)
         self.assertIn("$justinybgao-codex-workflow", text)
-        self.assertIn("allow_implicit_invocation: false", text)
+        self.assertIn("allow_implicit_invocation: true", text)
+        self.assertIn("activation banner", text.lower())
 
     def test_repository_has_installation_and_license_files(self) -> None:
         for relative_path in (

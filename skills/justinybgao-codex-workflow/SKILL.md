@@ -1,6 +1,6 @@
 ---
 name: justinybgao-codex-workflow
-description: "Use when the user explicitly requests the Justinybgao architecture-led coding workflow for a feature, bug fix, refactor, migration, or release preparation."
+description: "Use when starting a new Codex coding task or when the user asks for architecture-led planning, implementation, review, refactoring, migration, or release preparation."
 ---
 
 # Justinybgao Codex Workflow
@@ -10,6 +10,21 @@ description: "Use when the user explicitly requests the Justinybgao architecture
 Keep the primary agent on the model and reasoning effort selected in the desktop composer. It owns user-facing decisions, architecture, orchestration, and final acceptance. Use `luna_ba` only when the task needs business-analysis preparation, and use `luna_searcher` only when the task needs external facts. Delegate every project-file modification to `luna_worker`, then require an independent `luna_reviewer` pass before completion or release.
 
 For the intended setup, select Sol medium (`gpt-5.6-sol` with `medium` reasoning) in the desktop composer before starting the task. The primary agent does not override or switch that model within a task. The optional BA and search agents are separate fresh-context children whose lower-cost Luna settings keep routine fact-finding out of the primary Sol context. Explicit custom-agent spawn is authoritative; do not rely on a global `AGENTS.md` default or global subagent defaults for routing.
+
+## Activation handshake (mandatory)
+
+When this skill is actually loaded for a task, the first assistant message must begin with this exact marker:
+
+`[Justinybgao Workflow · ACTIVE]`
+
+Immediately below it, report:
+
+- Skill: `justinybgao-codex-workflow`;
+- Primary model: the model and reasoning effort selected in the desktop composer, or `desktop-selected / not exposed` when the runtime does not expose them;
+- Coding/review route: `luna_worker` and `luna_reviewer`, both fixed at `gpt-5.6-luna / max`;
+- Phase: `inspection`.
+
+Only print `ACTIVE` after this skill has actually been loaded. Do not claim activation because the skill is installed, listed, mentioned, or merely eligible for implicit invocation. If the user explicitly requests this workflow but it is unavailable, state `[Justinybgao Workflow · NOT ACTIVE]` and stop before modification. At meaningful phase changes, use a concise marker such as `[Justinybgao Workflow · PHASE: worker]`; do not repeat status on every turn. The final response must include `[Justinybgao Workflow · COMPLETE]` or `[Justinybgao Workflow · BLOCKED]`.
 
 ## Compatibility gate
 

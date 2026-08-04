@@ -35,15 +35,42 @@ class RepositoryContractTests(unittest.TestCase):
     def test_orchestration_is_sequential_and_fresh(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
         workflow = text.split("## Workflow", 1)[1].split("\n## ", 1)[0]
+        searcher = workflow.index("luna_searcher")
+        analyst = workflow.index("luna_ba")
         grill = workflow.index("Grill")
+        design_gate = workflow.index("Superpowers-style design/planning gate")
         worker = workflow.index("Spawn the custom agent `luna_worker`", grill)
         reviewer = workflow.index("Spawn the custom agent `luna_reviewer`", worker)
+        self.assertLess(searcher, analyst)
+        self.assertLess(grill, design_gate)
+        self.assertLess(design_gate, worker)
         self.assertLess(grill, worker)
         self.assertLess(worker, reviewer)
         self.assertIn('fork_turns: "none"', text)
         self.assertIn("Do not pass `model`", text)
         self.assertIn("Do not pass `reasoning_effort`", text)
         self.assertIn("stop before any modification", text)
+
+    def test_analysis_and_search_are_conditional(self) -> None:
+        text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
+        normalized = text.lower()
+        self.assertIn("only when the task needs", normalized)
+        self.assertIn("skip it when the requirements are already complete", normalized)
+        self.assertIn("skip it when no external facts are needed", normalized)
+        self.assertIn("initial budget of five", normalized)
+        self.assertIn("initial budget of eight", normalized)
+        self.assertIn("checkpoint, not a total cap", normalized)
+        self.assertIn("skip it for routine tasks", normalized)
+        self.assertIn("luna_ba", text)
+        self.assertIn("luna_searcher", text)
+
+    def test_primary_model_and_routing_contract(self) -> None:
+        text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
+        normalized = text.lower()
+        self.assertIn("sol medium", normalized)
+        self.assertIn("desktop composer", normalized)
+        self.assertIn("does not override or switch", normalized)
+        self.assertIn("explicit custom-agent spawn is authoritative", normalized)
 
     def test_skill_requires_independent_review_and_release_authorization(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
@@ -65,16 +92,36 @@ class RepositoryContractTests(unittest.TestCase):
         agent = self.load_toml("codex/agents/luna_reviewer.toml")
         self.assertEqual(agent["name"], "luna_reviewer")
         self.assertEqual(agent["model"], "gpt-5.6-luna")
-        self.assertEqual(agent["model_reasoning_effort"], "high")
+        self.assertEqual(agent["model_reasoning_effort"], "max")
         self.assertEqual(agent["sandbox_mode"], "workspace-write")
         self.assertIn("Never edit source or test code", agent["developer_instructions"])
         self.assertIn("explicit release authorization", agent["developer_instructions"])
+
+    def test_ba_binding(self) -> None:
+        agent = self.load_toml("codex/agents/luna_ba.toml")
+        self.assertEqual(agent["name"], "luna_ba")
+        self.assertEqual(agent["model"], "gpt-5.6-luna")
+        self.assertEqual(agent["model_reasoning_effort"], "medium")
+        self.assertEqual(agent["sandbox_mode"], "read-only")
+        self.assertIn("business analysis", agent["developer_instructions"])
+        self.assertIn("Never modify", agent["developer_instructions"])
+
+    def test_searcher_binding(self) -> None:
+        agent = self.load_toml("codex/agents/luna_searcher.toml")
+        self.assertEqual(agent["name"], "luna_searcher")
+        self.assertEqual(agent["model"], "gpt-5.6-luna")
+        self.assertEqual(agent["model_reasoning_effort"], "medium")
+        self.assertEqual(agent["sandbox_mode"], "read-only")
+        self.assertIn("web search", agent["developer_instructions"])
+        self.assertIn("source URLs", agent["developer_instructions"])
 
     def test_grilling_reference_is_attributed(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/references/grilling.md")
         self.assertIn("mattpocock/skills", text)
         self.assertIn("MIT", text)
         self.assertIn("one question at a time", text)
+        self.assertIn("question budget", text)
+        self.assertIn("checkpoint, not a total cap", text)
         self.assertIn("Do not begin implementation", text)
 
     def test_ui_metadata_uses_explicit_invocation(self) -> None:
@@ -119,6 +166,8 @@ class RepositoryContractTests(unittest.TestCase):
             self.assertEqual(first_install.returncode, 0, first_install.stderr)
             installed_skill = codex_home / "skills" / "justinybgao-codex-workflow"
             self.assertTrue((installed_skill / "SKILL.md").is_file())
+            self.assertTrue((codex_home / "agents" / "luna_ba.toml").is_file())
+            self.assertTrue((codex_home / "agents" / "luna_searcher.toml").is_file())
             self.assertTrue((codex_home / "agents" / "luna_worker.toml").is_file())
             self.assertTrue((codex_home / "agents" / "luna_reviewer.toml").is_file())
             self.assertFalse((codex_home / "config.toml").exists())
@@ -212,6 +261,8 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("--sandbox read-only", text)
         self.assertIn("luna_worker", text)
         self.assertIn("luna_reviewer", text)
+        self.assertIn("historical", text)
+        self.assertIn("predates", text)
         self.assertIn("SHA-256 before", text)
         self.assertIn("SHA-256 after", text)
         self.assertIn('"fork_turns":"none"', text)

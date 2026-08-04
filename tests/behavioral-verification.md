@@ -2,6 +2,8 @@
 
 Date: 2026-08-04
 
+Scope note: This is historical verification of the original two-agent workflow. It predates the optional BA/search agents, the reviewer max update, and the Superpowers-style design/planning gate. It verifies fresh-context routing and read-only sequencing, but it is not a current full-model verification of every optional route.
+
 Codex: `codex-cli 0.146.0-alpha.9.2`
 
 Parent thread: `019fc873-cc27-77e1-85d8-c9c09312c91e`

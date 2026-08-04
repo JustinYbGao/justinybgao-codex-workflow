@@ -1,11 +1,13 @@
 ---
 name: justinybgao-codex-workflow
-description: "Use when starting a new Codex coding task or when the user asks for architecture-led planning, implementation, review, refactoring, migration, or release preparation."
+description: "Use when explicitly invoked as $justinybgao-codex-workflow for architecture-led implementation, code review, migration, or release work."
 ---
 
 # Justinybgao Codex Workflow
 
 ## Overview
+
+This skill is explicit opt-in. Invoke it as `$justinybgao-codex-workflow` for architecture-led implementation, code review, migration, or release work. It is not loaded for simple terminal commands, explanations, read-only inspection, or straightforward documentation edits. The activation banner only appears after explicit invocation.
 
 Keep the primary agent on the model and reasoning effort selected in the desktop composer. It owns user-facing decisions, architecture, orchestration, and final acceptance. Use `luna_ba` only when the task needs business-analysis preparation, and use `luna_searcher` only when the task needs external facts. Delegate every project-file modification to `luna_worker`, then require an independent `luna_reviewer` pass before completion or release.
 
@@ -24,7 +26,7 @@ Immediately below it, report:
 - Coding/review route: `luna_worker` and `luna_reviewer`, both fixed at `gpt-5.6-luna / max`;
 - Phase: `inspection`.
 
-Only print `ACTIVE` after this skill has actually been loaded. Do not claim activation because the skill is installed, listed, mentioned, or merely eligible for implicit invocation. If the user explicitly requests this workflow but it is unavailable, state `[Justinybgao Workflow · NOT ACTIVE]` and stop before modification. At meaningful phase changes, use a concise marker such as `[Justinybgao Workflow · PHASE: worker]`; do not repeat status on every turn. The final response must include `[Justinybgao Workflow · COMPLETE]` or `[Justinybgao Workflow · BLOCKED]`.
+Only print `ACTIVE` after this skill has actually been loaded following explicit invocation. Do not claim activation because the skill is installed, listed, mentioned, or otherwise available. If the user explicitly requests this workflow but it is unavailable, state `[Justinybgao Workflow · NOT ACTIVE]` and stop before modification. At meaningful phase changes, use a concise marker such as `[Justinybgao Workflow · PHASE: worker]`; do not repeat status on every turn. The final response must include `[Justinybgao Workflow · COMPLETE]` or `[Justinybgao Workflow · BLOCKED]`.
 
 ## Compatibility gate
 

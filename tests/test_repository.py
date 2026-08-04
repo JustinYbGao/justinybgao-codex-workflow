@@ -31,6 +31,23 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertEqual(fields, {"name", "description"})
         self.assertIn("name: justinybgao-codex-workflow", text)
         self.assertRegex(text, r"description: ['\"]?Use when")
+        description = next(
+            line.split(":", 1)[1].strip()
+            for line in match.group(1).splitlines()
+            if line.startswith("description:")
+        )
+        self.assertIn(
+            "explicitly invoked as $justinybgao-codex-workflow",
+            description,
+        )
+        for trigger in (
+            "architecture-led implementation",
+            "code review",
+            "migration",
+            "release work",
+        ):
+            self.assertIn(trigger, description)
+        self.assertNotIn("new Codex coding task", description)
 
     def test_orchestration_is_sequential_and_fresh(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
@@ -82,6 +99,36 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("do not claim", normalized)
         self.assertIn("primary model", normalized)
         self.assertIn("phase:", normalized)
+
+    def test_skill_is_explicit_opt_in_and_excludes_simple_tasks(self) -> None:
+        text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
+        normalized = text.lower()
+        self.assertIn("explicit opt-in", normalized)
+        self.assertIn("not loaded for simple terminal commands", normalized)
+        self.assertIn("explanations", normalized)
+        self.assertIn("read-only inspection", normalized)
+        self.assertIn("straightforward documentation edits", normalized)
+        self.assertIn(
+            "activation banner only appears after explicit invocation",
+            normalized,
+        )
+
+    def test_readme_documents_explicit_opt_in_and_simple_task_exclusions(self) -> None:
+        text = self.read("README.md")
+        self.assertIn("explicit opt-in", text)
+        self.assertIn("显式选择加入", text)
+        self.assertIn("$justinybgao-codex-workflow", text)
+        for exclusion in (
+            "simple terminal commands",
+            "Q&A",
+            "read-only inspection",
+            "small documentation edits",
+            "简单终端命令",
+            "问答",
+            "只读检查",
+            "小型文档编辑",
+        ):
+            self.assertIn(exclusion, text)
 
     def test_skill_requires_independent_review_and_release_authorization(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/SKILL.md")
@@ -145,11 +192,12 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertIn("checkpoint, not a total cap", text)
         self.assertIn("Do not begin implementation", text)
 
-    def test_ui_metadata_supports_implicit_and_explicit_invocation(self) -> None:
+    def test_ui_metadata_requires_explicit_invocation(self) -> None:
         text = self.read("skills/justinybgao-codex-workflow/agents/openai.yaml")
         self.assertIn('display_name: "Justinybgao Codex Workflow"', text)
         self.assertIn("$justinybgao-codex-workflow", text)
-        self.assertIn("allow_implicit_invocation: true", text)
+        self.assertIn("allow_implicit_invocation: false", text)
+        self.assertNotIn("allow_implicit_invocation: true", text)
         self.assertIn("activation banner", text.lower())
 
     def test_repository_has_installation_and_license_files(self) -> None:

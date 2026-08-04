@@ -3,4 +3,4 @@ interface:
   short_description: "Visible architecture-led workflow with Luna coding and review"
   default_prompt: "Start with $justinybgao-codex-workflow and show the activation banner before doing any work."
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

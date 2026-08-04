@@ -1,8 +1,8 @@
 # Justinybgao Codex Workflow / Justinybgao Codex 工作流
 
-A Codex workflow for architecture-led coding. New coding tasks are eligible for implicit invocation, while the explicit starter prompt remains the reliable way to request it. The primary agent stays focused on reasoning and user decisions, while isolated Luna agents handle business-analysis preparation, web research, implementation, and review.
+A Codex workflow for architecture-led coding. It is explicit opt-in: invoke `$justinybgao-codex-workflow` in the first message when you want architecture-led implementation, code review, migration, or release work. That is the reliable and normal path. Simple terminal commands, Q&A, read-only inspection, and small documentation edits do not use this skill. The primary agent stays focused on reasoning and user decisions, while isolated Luna agents handle business-analysis preparation, web research, implementation, and review.
 
-这是一个以架构设计为导向的 Codex 编码工作流。新的编码任务可以被隐式调用，但显式启动提示仍然是请求该工作流的可靠方式。主代理专注于推理和用户决策，隔离运行的 Luna 代理负责业务分析准备、网络研究、实现和评审。
+这是一个以架构设计为导向的 Codex 编码工作流。它采用显式选择加入：需要进行架构驱动的实现、代码评审、迁移或发布工作时，在第一条消息中调用 `$justinybgao-codex-workflow`。这是可靠且正常的使用路径。简单终端命令、问答、只读检查和小型文档编辑不使用此技能。主代理专注于推理和用户决策，隔离运行的 Luna 代理负责业务分析准备、网络研究、实现和评审。
 
 The workflow is designed around one hard rule:
 
@@ -64,9 +64,9 @@ The primary model is selected in the desktop composer before the task starts. Fo
 
 ## Activation and visibility / 激活与可见性
 
-The skill metadata allows Codex to consider this workflow for a new coding task. That is eligibility, not proof that the skill was loaded. When it is actually active, the first assistant message must begin with:
+The skill is explicit opt-in. It is not loaded for simple terminal commands, Q&A, read-only inspection, or small documentation edits. Use `$justinybgao-codex-workflow` in the first message when you want this workflow; that is the reliable and normal path. The activation banner only appears after explicit invocation. When it is actually active, the first assistant message must begin with:
 
-技能元数据允许 Codex 在新的编码任务中考虑使用该工作流，但这只表示具备调用资格，并不证明技能已经加载。技能真正激活时，助手的第一条消息必须以以下内容开头：
+该技能采用显式选择加入。简单终端命令、问答、只读检查和小型文档编辑不会加载该技能。需要使用此工作流时，应在第一条消息中使用 `$justinybgao-codex-workflow`；这是可靠且正常的使用路径。激活横幅只会在显式调用后出现。技能真正激活时，助手的第一条消息必须以以下内容开头：
 
 ```text
 [Justinybgao Workflow · ACTIVE]
@@ -95,9 +95,9 @@ You need:
 - PyYAML 6.0.3 for the official skill validator.
   用于官方技能验证器的 PyYAML 6.0.3。
 
-The workflow does not edit your global Codex configuration or `AGENTS.md`. Implicit invocation is enabled in the skill metadata, but a blank conversation with no coding task cannot be forced to load a task-specific skill by the skill file alone.
+The workflow does not edit your global Codex configuration or `AGENTS.md`. The tradeoff of explicit opt-in is one first-message action: it keeps routine tasks from loading this skill and saves tokens. Automatic triggering cannot guarantee both zero false positives and zero user action, so explicit invocation in the first message is the reliable and normal path.
 
-该工作流不会修改全局 Codex 配置或 `AGENTS.md`。技能元数据已启用隐式调用，但仅凭技能文件本身，无法强制一个没有编码任务的空白对话加载特定任务技能。
+该工作流不会修改全局 Codex 配置或 `AGENTS.md`。显式选择加入的权衡是需要在第一条消息中执行一次操作：这样可以避免常规任务加载此技能并节省 token。自动触发无法同时保证零误报和零用户操作，因此在第一条消息中显式调用是可靠且正常的使用路径。
 
 ## Installation / 安装
 
@@ -141,9 +141,9 @@ The installer is conflict-safe: an existing different file, directory, or symbol
 
 ## How to use it / 使用方法
 
-For a guaranteed activation, invoke the skill explicitly in the first message of a new task:
+For the reliable and normal path, invoke the skill explicitly in the first message of a new task:
 
-如需确保激活，请在新任务的第一条消息中显式调用该技能：
+可靠且正常的使用路径是在新任务的第一条消息中显式调用该技能：
 
 ```text
 $justinybgao-codex-workflow implement this feature
